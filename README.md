@@ -6,7 +6,7 @@ This requires Node.js v7.7.0 or greater.
 
 ## Installation
 ```
-npm install —save github-contrib-stats
+npm install --save github-contrib-stats
 ```
 
 ## Usage
