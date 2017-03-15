@@ -20,5 +20,13 @@
     "node-js"
   ],
   "author": "darkturtle",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^0.22.0",
+    "moment": "^2.17.1",
+    "requestify": "^0.2.5"
+  },
+  "devDependencies": {
+    "pryjs": "^1.0.3"
+  }
 }
