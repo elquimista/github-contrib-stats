@@ -24,3 +24,16 @@ async function test() {
 
 test();
 ```
+
+Output will be in the following format:
+```js
+{
+  basicUserData: { ... }, // Find more details at https://api.github.com/users/clthck
+  contributionStats: {
+    totalContributions: 857,
+    todaysContributions: 9,
+    currentStreak: 4,
+    longestStreak: 24
+  }
+}
+```
