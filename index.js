@@ -1,6 +1,5 @@
 'use strict';
 
-// const pry = require('pryjs');
 const requestify = require('requestify');
 const cheerio = require('cheerio');
 const moment = require('moment');
@@ -78,7 +77,8 @@ async function getContributionStats(username, userJoinedDate) {
 module.exports = async username => {
   try {
     const basicUserData = await getBasicUserData(username);
-    return await getContributionStats(username, basicUserData.created_at);
+    const contributionStats = await getContributionStats(username, basicUserData.created_at);
+    return { basicUserData, contributionStats };
   }
   catch (err) {
     console.error(err, err.stack);
