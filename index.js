@@ -15,7 +15,7 @@ const getBasicUserData = async username => {
   if (authCredentials.username && authCredentials.password) {
     options = {
       auth: authCredentials
-    }
+    };
   }
 
   return (await requestify.get(`https://api.github.com/users/${username}`, options)).getBody();
@@ -108,5 +108,5 @@ module.exports = {
     catch (err) {
       console.error(err, err.stack);
     }
-  };
+  }
 };
