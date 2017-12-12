@@ -100,13 +100,27 @@ module.exports = {
     authCredentials.password = password;
   },
   get: async username => {
-    try {
-      const basicUserData = await getBasicUserData(username);
-      const contributionStats = await getContributionStats(username, basicUserData.created_at);
-      return { basicUserData, contributionStats };
-    }
-    catch (err) {
-      console.error(err, err.stack);
-    }
+    let rateLimited;
+
+    do {
+      try {
+        const basicUserData = await getBasicUserData(username);
+        const contributionStats = await getContributionStats(username, basicUserData.created_at);
+
+        return { basicUserData, contributionStats };
+      }
+      catch (err) {
+        if (err.code === 403) {
+          rateLimited = true;
+          let waitTime = (moment(err.headers['x-ratelimit-reset']).add(1, 'second').unix() - moment.utc().unix()) * 1000;
+
+          await (new Promise(resolve => setTimeout(resolve, waitTime % 3600000)));
+        } else if (err.code === 404) {
+          return null;
+        } else {
+          throw err;
+        }
+      }
+    } while(rateLimited)
   }
 };
