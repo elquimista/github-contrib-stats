@@ -4,14 +4,34 @@ const requestify = require('requestify');
 const cheerio = require('cheerio');
 const moment = require('moment');
 
+let authCredentials = {};
+
 // isoDate()
 const isoDate = date => moment(date).format('YYYY-MM-DD');
 // getBasicUserData()
-const getBasicUserData = async username => (await requestify.get(`https://api.github.com/users/${username}`)).getBody();
+const getBasicUserData = async username => {
+  let options;
+
+  if (authCredentials.username && authCredentials.password) {
+    options = {
+      auth: authCredentials
+    }
+  }
+
+  return (await requestify.get(`https://api.github.com/users/${username}`, options)).getBody();
+}
 
 // getContributionss()
 async function getContributions(username, toDate) {
-  const res = await requestify.get(`https://github.com/users/${username}/contributions?to=${isoDate(toDate)}`);
+  let options;
+
+  if (authCredentials.username && authCredentials.password) {
+    options = {
+      auth: authCredentials
+    }
+  }
+
+  const res = await requestify.get(`https://github.com/users/${username}/contributions?to=${isoDate(toDate)}`, options);
   const $ = cheerio.load(res.getBody());
   const fromDate = moment(toDate).subtract(1, 'y');
   const data = [];
@@ -74,13 +94,19 @@ async function getContributionStats(username, userJoinedDate) {
 }
 
 // exports
-module.exports = async username => {
-  try {
-    const basicUserData = await getBasicUserData(username);
-    const contributionStats = await getContributionStats(username, basicUserData.created_at);
-    return { basicUserData, contributionStats };
-  }
-  catch (err) {
-    console.error(err, err.stack);
-  }
+module.exports = {
+  auth: (username, password) => {
+    authCredentials.username = username;
+    authCredentials.password = password;
+  },
+  get: async username => {
+    try {
+      const basicUserData = await getBasicUserData(username);
+      const contributionStats = await getContributionStats(username, basicUserData.created_at);
+      return { basicUserData, contributionStats };
+    }
+    catch (err) {
+      console.error(err, err.stack);
+    }
+  };
 };
