@@ -112,7 +112,7 @@ module.exports = {
       catch (err) {
         if (err.code === 403) {
           rateLimited = true;
-          let waitTime = (moment.utc(err.headers['x-ratelimit-reset']).add(1, 'second').unix() - moment.utc().unix()) * 1000;
+          let waitTime = (moment.unix(err.headers['x-ratelimit-reset']).add(1, 'second').unix() - moment.utc().unix()) * 1000;
 
           await (new Promise(resolve => setTimeout(resolve, waitTime % 3600000)));
         } else if (err.code === 404) {
